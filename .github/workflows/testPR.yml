@@ -23,7 +23,7 @@ jobs:
       - name: fetch
         run: |
            git fetch --no-tags --prune --depth=1 origin +refs/heads/*:refs/remotes/origin/*
-           echo ::set-env name=PREVIOUS_BRANCH::$(echo ${{ git show-branch | grep "*" | grep -v "$(git rev-parse --abbrev-ref HEAD)" | head -n1 | sed "s/.*\\[\\(.*\\)\\].*/\\1/" | sed "s/[\\^~].*//" }})
+           echo ::set-env name=PREVIOUS_BRANCH::$(git show-branch | grep "*" | grep -v "$(git rev-parse --abbrev-ref HEAD)" | head -n1 | sed "s/.*\\[\\(.*\\)\\].*/\\1/" | sed "s/[\\^~].*//")
       - uses: geertvdc/setup-hub@master
       - name: Configure Git
         run: |

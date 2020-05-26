@@ -14,7 +14,7 @@ createPR('release/20.5.0', 'release/20.5.0');
 
 function getGitUserInfo() {
   exec(
-    `git show-branch | grep "*" | grep -v "$(git rev-parse --abbrev-ref HEAD)" | head -n1 | sed "s/.*\\[\\(.*\\)\\].*/\\1/" | sed "s/[\\^~].*//"`,
+    `git fetch | git show-branch | grep "*" | grep -v "$(git rev-parse --abbrev-ref HEAD)" | head -n1 | sed "s/.*\\[\\(.*\\)\\].*/\\1/" | sed "s/[\\^~].*//"`,
     (error, output, input) => {
       if (error) {
         throw error;

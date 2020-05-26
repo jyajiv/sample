@@ -29,11 +29,11 @@ jobs:
       - name: print previous branch
         run: |  
           echo previous branch ${{ env.PREVIOUS_BRANCH }}
-      - uses: geertvdc/setup-hub@master
       - name: Configure Git
         run: |
           git config --local user.email "vijay.jeyaraman@cognizant.com"
           git config --local user.name "Vijay Actions"
+      - uses: geertvdc/setup-hub@master
       - name: create PR
         env:
           GITHUB_USER: ${{ secrets.GITHUB_USER }}

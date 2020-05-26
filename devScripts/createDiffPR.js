@@ -17,6 +17,7 @@ function getGitUserInfo() {
     `git show-branch | grep "*" | grep -v "$(git rev-parse --abbrev-ref HEAD)" | head -n1 | sed "s/.*\\[\\(.*\\)\\].*/\\1/" | sed "s/[\\^~].*//"`,
     (error, output, input) => {
       if (error) {
+        console.log(error);
         throw error;
       } else {
         previousBranch = output.trim();
@@ -29,6 +30,7 @@ function getGitUserInfo() {
     `git fetch | git symbolic-ref HEAD 2>/dev/null | cut -d"/" -f 3,4,5`,
     (error, output, input) => {
       if (error) {
+        console.log(error);
         throw error;
       } else {
         currentBranch = output.trim();
@@ -37,6 +39,7 @@ function getGitUserInfo() {
           `git remote get-url origin | cut -d"/" -f 4`,
           (err, stdOut, stdIn) => {
             if (err) {
+              console.log(err);
               throw err;
             } else {
               currentUserFork = `${stdOut.trim()}/example-services`;

@@ -19,12 +19,12 @@ jobs:
         with:
           fetch-depth: 0
       - run: |
-         git fetch --prune --unshallow --tags
+         git fetch --prune --tags
       - name: Branch name
         run: echo running on branch ${GITHUB_REF##*/}
       - name: fetch
         run: |
-           git fetch --no-tags --prune --depth=10000 origin +refs/heads/*:refs/remotes/origin/*
+           git fetch --prune --depth=10000 origin +refs/heads/*:refs/remotes/origin/*
       - name: get previous branch
         run: |  
           git show-branch | grep "*" | grep -v "$(git rev-parse --abbrev-ref HEAD)" | head -n1 | sed "s/.*\\[\\(.*\\)\\].*/\\1/" | sed "s/[\\^~].*//"

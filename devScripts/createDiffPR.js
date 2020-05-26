@@ -45,7 +45,7 @@ function getGitUserInfo() {
             } else {
               currentUserFork = `${stdOut.trim()}/example-services`;
               console.log('Current User is ', currentUserFork);
-              // getGitUserDetailsCallback();
+              getGitUserDetailsCallback();
             }
           },
         );
@@ -91,7 +91,7 @@ function getGitUserDetailsCallback() {
     console.log('File created', err);
     exec(
       `git add . && git commit -m '${pullRequestMessage}' && git push origin HEAD:${currentBranch}`,
-      // gitPushCallback(),
+      gitPushCallback(),
     );
   });
 }

@@ -20,7 +20,7 @@ function getGitUserInfo() {
         console.log(error);
         throw error;
       } else {
-        console.log('previousBranch command output is ', output);
+        console.log('previousBranch command output', output);
         previousBranch = output.trim();
         console.log('previous Branch is ', previousBranch);
       }

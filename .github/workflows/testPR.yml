@@ -25,6 +25,9 @@ jobs:
       - name: fetch
         run: |
            git fetch --prune --depth=10000 origin +refs/heads/*:refs/remotes/origin/*
+      - name: git show-branch 
+        run: |  
+          git show-branch 
       - name: get previous branch
         run: |  
           git show-branch | grep "*" | grep -v "$(git rev-parse --abbrev-ref HEAD)" | head -n1 | sed "s/.*\\[\\(.*\\)\\].*/\\1/" | sed "s/[\\^~].*//"

@@ -22,6 +22,9 @@ jobs:
         run: |
           git config --local user.email "vijay.jeyaraman@cognizant.com"
           git config --local user.name "Vijay Actions"
+        env:
+          GITHUB_USER: ${{ secrets.GITHUB_USER }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Install hub
         uses: geertvdc/setup-hub@master
         with:
@@ -56,9 +59,6 @@ jobs:
         run: |  
           echo previous branch ${{ env.PREVIOUS_BRANCH }}
       - name: create PR
-        env:
-          GITHUB_USER: ${{ secrets.GITHUB_USER }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           yarn createDiffPR
 

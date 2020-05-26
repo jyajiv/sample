@@ -17,10 +17,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
         with:
-          ref: '${{ github.ref }}'
           fetch-depth: 0
-      - name: echo beabch name
-        run: echo '${{ github.ref }}'
+      - name: Branch name
+        run: echo running on branch ${GITHUB_REF##*/}
       - name: fetch
         run: |
            git fetch --no-tags --prune --depth=1 origin +refs/heads/*:refs/remotes/origin/*

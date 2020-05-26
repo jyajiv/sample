@@ -22,7 +22,7 @@ jobs:
         run: echo running on branch ${GITHUB_REF##*/}
       - name: fetch
         run: |
-           git fetch --no-tags --prune --depth=1 origin +refs/heads/*:refs/remotes/origin/*
+           git fetch --no-tags --prune --depth=0 origin +refs/heads/*:refs/remotes/origin/*
       - name: get previous branch
         run: |  
           git show-branch | grep "*" | grep -v "$(git rev-parse --abbrev-ref HEAD)" | head -n1 | sed "s/.*\\[\\(.*\\)\\].*/\\1/" | sed "s/[\\^~].*//"

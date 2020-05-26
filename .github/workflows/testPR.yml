@@ -3,7 +3,7 @@ name: Release Codepush Build and Deploy
 on: 
   push:
     branches:
-      - 'release/codepush_***'
+      - 'release/codepush_**'
 jobs:
   codepush-android-build-deploy:
       name: Codepush Android Build and Deploy
@@ -32,7 +32,6 @@ jobs:
           GITHUB_USER: ${{ secrets.GITHUB_USER }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          hub pull-request -f -b jyajiv/example-services:release/codepush_01 -h jyajiv/example-services:release/codepush_02 -m 'Git diff report for release/20.5.0 and release/20.5.0'
           node ./devScripts/createDiffPR.js
 
   

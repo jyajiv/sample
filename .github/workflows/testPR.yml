@@ -31,7 +31,7 @@ jobs:
           hub-version: 2.14.2
       - name: run hub commands
         run: |
-         hub release
+         hub --version
       - name: Setup Node
         uses: actions/setup-node@v1
         with:

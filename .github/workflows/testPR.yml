@@ -24,6 +24,8 @@ jobs:
           git config --local user.name "Vijay Actions"
       - name: Install hub
         uses: geertvdc/setup-hub@master
+        with:
+          hub-version: v2.14.2
       - name: run hub commands
         run: |
          hub release

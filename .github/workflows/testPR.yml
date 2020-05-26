@@ -25,7 +25,7 @@ jobs:
            git fetch --no-tags --prune --depth=1 origin +refs/heads/*:refs/remotes/origin/*
       - name: get previous branch
         run: |  
-         echo ::set-env name=PREVIOUS_BRANCH::$(git show-branch | grep "*" | grep -v "$(git rev-parse --abbrev-ref HEAD)" | head -n1 | sed "s/.*\\[\\(.*\\)\\].*/\\1/" | sed "s/[\\^~].*//")
+          echo ::set-env name=PREVIOUS_BRANCH::$(git show-branch | grep "*" | grep -v "$(git rev-parse --abbrev-ref HEAD)" | head -n1 | sed "s/.*\\[\\(.*\\)\\].*/\\1/" | sed "s/[\\^~].*//"
       - name: print previous branch
         run: |  
           echo previous branch ${{ env.PREVIOUS_BRANCH }}

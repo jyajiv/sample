@@ -8,12 +8,13 @@
     "start": "react-native start",
     "test": "jest",
     "lint": "eslint .",
-    "createDiffPR": "node ./devScripts/createDiffPR.js"
+    "createDiffPR": "node ./devScripts/branch_diff.js"
   },
   "dependencies": {
     "react": "16.9.0",
     "react-native": "0.61.4",
-    "lodash": "^4.17.4"
+    "lodash": "^4.17.4",
+    "node-xlsx": "^0.15.0"
   },
   "devDependencies": {
     "@babel/core": "^7.7.2",

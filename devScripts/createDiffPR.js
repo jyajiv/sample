@@ -43,7 +43,6 @@ function commitAllChanges() {
   console.log(
     `git add . && git commit -m '${pullRequestMessage}' && git push origin ${sourceBranch}`,
   );
-  gitPushCallback();
   exec(
     `git add . && git commit -m '${pullRequestMessage}' && git push origin ${sourceBranch}`,
     gitPushCallback(),

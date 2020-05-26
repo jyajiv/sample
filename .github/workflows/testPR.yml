@@ -18,6 +18,8 @@ jobs:
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
+      - run: |
+         git fetch --prune --unshallow --tags
       - name: Branch name
         run: echo running on branch ${GITHUB_REF##*/}
       - name: fetch

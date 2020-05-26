@@ -7,9 +7,9 @@ on:
 jobs:
   codepush-android-build-deploy:
       name: Codepush Android Build and Deploy
-      runs-on: ubuntu-latest
+      runs-on: macos-latest
       env:
-        ACTIONS_OS_NAME: "linux"
+        ACTIONS_OS_NAME: "osx"
         NODE_OPTIONS: --max_old_space_size=8192
         CODEPUSH_KEY_PASSWORD: ${{ secrets.CODEPUSH_API_TOKEN }}
         timeout-minutes: 120
@@ -17,8 +17,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
         with:
-          ref: release/codepush_02
+          ref: '${{ github.ref }}'
           fetch-depth: 0
+        run: echo '${{ github.ref }}'
       - name: fetch
         run: |
            git fetch --no-tags --prune --depth=1 origin +refs/heads/*:refs/remotes/origin/*
@@ -32,6 +33,6 @@ jobs:
           GITHUB_USER: ${{ secrets.GITHUB_USER }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          node ./devScripts/createDiffPR.js
+          yarn createDiffPR
 
   

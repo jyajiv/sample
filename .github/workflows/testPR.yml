@@ -18,6 +18,15 @@ jobs:
         uses: actions/checkout@v2
         with:
           fetch-depth: 10
+      - name: Configure Git
+        run: |
+          git config --local user.email "vijay.jeyaraman@cognizant.com"
+          git config --local user.name "Vijay Actions"
+      - name: Install hub
+        uses: geertvdc/setup-hub@master
+      - name: run hub commands
+        run: |
+         hub release
       - name: Setup Node
         uses: actions/setup-node@v1
         with:
@@ -44,11 +53,6 @@ jobs:
       - name: print previous branch
         run: |  
           echo previous branch ${{ env.PREVIOUS_BRANCH }}
-      - name: Configure Git
-        run: |
-          git config --local user.email "vijay.jeyaraman@cognizant.com"
-          git config --local user.name "Vijay Actions"
-      - uses: geertvdc/setup-hub@master
       - name: create PR
         env:
           GITHUB_USER: ${{ secrets.GITHUB_USER }}

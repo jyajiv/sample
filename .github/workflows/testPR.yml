@@ -3,7 +3,7 @@ name: Release Codepush Build and Deploy
 on: 
   push:
     branches:
-      - 'release/codepush_**'
+      - 'release/codepush_***'
 jobs:
   codepush-android-build-deploy:
       name: Codepush Android Build and Deploy

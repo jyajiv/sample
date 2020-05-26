@@ -19,6 +19,7 @@ jobs:
         with:
           ref: '${{ github.ref }}'
           fetch-depth: 0
+      - name: echo beabch name
         run: echo '${{ github.ref }}'
       - name: fetch
         run: |

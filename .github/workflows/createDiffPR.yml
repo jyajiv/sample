@@ -22,9 +22,7 @@ jobs:
         run: |
           git config --local user.email "vijay.jeyaraman@cognizant.com"
           git config --local user.name "Vijay Actions"
-          value=`git symbolic-ref HEAD 2>/dev/null | cut -d"/" -f 3,4,5`
-          echo ::set-env name=CURRENT_BRANCH::$value
-          echo $value
+          echo ::set-env name=CURRENT_BRANCH::$(echo ${GITHUB_REF} | cut -d"/" -f 3,4,5)
         env:
           GITHUB_USER: ${{ secrets.GITHUB_USER }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

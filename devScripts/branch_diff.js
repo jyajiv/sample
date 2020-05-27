@@ -49,7 +49,7 @@ const currentBranchCallBack = (error, output, input) => {
   if (error) {
     throw error;
   } else {
-    branches[0] = output.trim();
+    branches[0] = 'codepush_2.0'; //output.trim();
     console.log('previous Branch is ', output.trim());
     executeCommand(branches[0], branches[1]);
   }
@@ -62,7 +62,7 @@ function getBranchDetails() {
       if (error) {
         throw error;
       } else {
-        branches[1] = output.trim();
+        branches[1] = 'release/codepush_2.0'; //output.trim();
         console.log('Current branch is ', output.trim());
         exec(
           `git show-branch | grep "*" | grep -v "$(git rev-parse --abbrev-ref HEAD)" | head -n1 | sed "s/.*\\[\\(.*\\)\\].*/\\1/" | sed "s/[\\^~].*//"`,

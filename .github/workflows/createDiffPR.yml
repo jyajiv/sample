@@ -24,6 +24,7 @@ jobs:
           git config --local user.name "Vijay Actions"
           value=`git symbolic-ref HEAD 2>/dev/null | cut -d"/" -f 3,4,5`
           echo ::set-env name=CURRENT_BRANCH::$value
+          echo $value
         env:
           GITHUB_USER: ${{ secrets.GITHUB_USER }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -48,7 +49,7 @@ jobs:
       - run: |
          git fetch --prune --tags
       - name: Branch name
-        run: echo running on branch ${env.CURRENT_BRANCH}
+        run: echo running on branch ${{ env.CURRENT_BRANCH }}
       - name: fetch
         run: |
            git fetch --prune --depth=10000 origin +refs/heads/*:refs/remotes/origin/*

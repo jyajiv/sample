@@ -48,7 +48,7 @@ jobs:
         run: |
           echo ::set-output name=CURRENT_BRANCH::$(echo ${GITHUB_REF} | cut -d"/" -f 3,4,5)
           echo ::set-output name=PARENT_BRANCH::"release/codepush_2.0"
-          echo running on branch ${{ outputs.CURRENT_BRANCH }}
+          echo running on branch ${{ CURRENT_BRANCH }}
         id: branch_name
       - name: fetch
         run: |

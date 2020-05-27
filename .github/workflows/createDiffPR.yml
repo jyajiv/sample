@@ -46,10 +46,10 @@ jobs:
          git fetch --prune --tags
       - name: Branch name
         run: |
-          echo ::set-env name=CURRENT_BRANCH::$(echo ${GITHUB_REF} | cut -d"/" -f 3,4,5)
-          echo running on branch ${{ env.CURRENT_BRANCH }}
-        env:
-          PARENT_BRANCH: "release/codepush_2.0"
+          echo ::set-output name=CURRENT_BRANCH::$(echo ${GITHUB_REF} | cut -d"/" -f 3,4,5)
+          echo ::set-output name=PARENT_BRANCH::"release/codepush_2.0"
+          echo running on branch ${{ outputs.CURRENT_BRANCH }}
+        id: branch_name
       - name: fetch
         run: |
            git fetch --prune --depth=10000 origin +refs/heads/*:refs/remotes/origin/*
@@ -61,13 +61,13 @@ jobs:
           git show-branch | grep "*" | grep -v "$(git rev-parse --abbrev-ref HEAD)" | head -n1 | sed "s/.*\\[\\(.*\\)\\].*/\\1/" | sed "s/[\\^~].*//"
       - name: print previous branch
         run: |  
-          echo previous branch ${{ env.PARENT_BRANCH }}
+          echo previous branch ${{ steps.branch_name.outputs.PARENT_BRANCH }}
       - name: generate diff report
         run: |
-          yarn generateDiffReport ${{env.PARENT_BRANCH} {env.CURRENT_BRANCH }}
+          yarn generateDiffReport ${{ steps.branch_name.outputs.PARENT_BRANCH }} ${{ steps.branch_name.outputs.CURRENT_BRANCH }}
       - name: push diff report
         run: |
-          git add . && git commit -m "Git Diff report" && git push origin ${{ env.CURRENT_BRANCH }}
+          git add . && git commit -m "Git Diff report" && git push origin ${{ steps.branch_name.outputs.CURRENT_BRANCH }}
       - name: create PR
         run: |
-          hub pull-request -f -b $(env.PARENT_BRANCH) -h $(env.CURRENT_BRANCH) -m "Git diff report for ${{ env.PARENT_BRANCH }} and ${{ env.CURRENT_BRANCH }}"
+          hub pull-request -f -b ${{ steps.branch_name.outputs.PARENT_BRANCH }}  -h ${{ steps.branch_name.outputs.CURRENT_BRANCH }} -m "Git diff report for ${{ steps.branch_name.outputs.PARENT_BRANCH }}  and ${{ steps.branch_name.outputs.CURRENT_BRANCH }}"

@@ -24,10 +24,10 @@ const gitPushCallback = (err, stdOut, stdIn) => {
   }
   console.log('Creating new Pull request ...');
   console.log(
-    `hub pull-request -f -b ${baseRepo}:${destinationBranch} -h ${baseRepo}:${sourceBranch} -m '${pullRequestMessage}'`,
+    `hub pull-request -f -b ${destinationBranch} -h ${sourceBranch} -m '${pullRequestMessage}'`,
   );
   exec(
-    `hub pull-request -f -b ${baseRepo}:${destinationBranch} -h ${baseRepo}:${sourceBranch} -m '${pullRequestMessage}'`,
+    `hub pull-request -f -b ${destinationBranch} -h ${sourceBranch} -m '${pullRequestMessage}'`,
     (error, output, input) => {
       if (error) {
         console.log('Error creating PR - ', error);

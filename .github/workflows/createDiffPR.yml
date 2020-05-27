@@ -64,7 +64,7 @@ jobs:
           echo previous branch ${{ env.PARENT_BRANCH }}
       - name: generate diff report
         run: |
-          yarn generateDiffReport ${{ env.PARENT_BRANCH env.CURRENT_BRANCH }}
+          yarn generateDiffReport ${{env.PARENT_BRANCH} {env.CURRENT_BRANCH }}
       - name: push diff report
         run: |
           git add . && git commit -m "Git Diff report" && git push origin ${{ env.CURRENT_BRANCH }}

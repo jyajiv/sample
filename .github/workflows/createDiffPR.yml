@@ -47,8 +47,8 @@ jobs:
       - name: Branch name
         run: |
           packageJson=`cat ./package.json`
-          echo $packageJson
-          echo ::set-output name=CURRENT_BRANCH::${{fromJson($packageJson).version}}
+          echo ${{ packageJson }}
+          echo ::set-output name=CURRENT_BRANCH::${{fromJson(${{packageJson}}).version}}
           echo ::set-output name=PARENT_BRANCH::"release/codepush_1.0"
         id: branch_name
       - name: fetch

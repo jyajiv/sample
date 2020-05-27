@@ -22,11 +22,10 @@ jobs:
         run: |
           git config --local user.email "vijay.jeyaraman@cognizant.com"
           git config --local user.name "Vijay Actions"
-          value=`git symbolic-ref HEAD 2>/dev/null | cut -d"/" -f 3,4,5`
+          echo ::set-env name=CURRENT_BRANCH::$(git symbolic-ref HEAD 2>/dev/null | cut -d"/" -f 3,4,5)
         env:
           GITHUB_USER: ${{ secrets.GITHUB_USER }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          CURRENT_BRANCH: $value
           PARENT_BRANCH: "release/codepush_2.0"
       - name: Install hub
         uses: geertvdc/setup-hub@master

@@ -49,12 +49,12 @@ jobs:
         run: |
           content=`cat ./package.json`
           echo "content $content"
-          echo "::set-output name=packageJson::$content"
+          echo "::set-output name=packageJson::"${{toJSON(content)}}"
       - name: Branch name
         run: |
           content=`cat ./package.json`
           echo steps.readPackageJson.outputs.packageJson
-          echo ::set-output name=CURRENT_BRANCH::"release/${{fromJson("{ \"name\": \"sample\", \"version\": \"0.0.1\", \"private\": true }").version}}"
+          echo ::set-output name=CURRENT_BRANCH::"release/${{fromJson(steps.readPackageJson.outputs.packageJson).version}}"
           echo ::set-output name=PARENT_BRANCH::"release/codepush_1.0"
         id: branch_name
       - name: fetch

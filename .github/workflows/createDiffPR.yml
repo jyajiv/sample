@@ -22,11 +22,9 @@ jobs:
         run: |
           git config --local user.email "vijay.jeyaraman@cognizant.com"
           git config --local user.name "Vijay Actions"
-          echo ::set-env name=CURRENT_BRANCH::$(echo ${GITHUB_REF} | cut -d"/" -f 3,4,5)
         env:
           GITHUB_USER: ${{ secrets.GITHUB_USER }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PARENT_BRANCH: "release/codepush_2.0"
       - name: Install hub
         uses: geertvdc/setup-hub@master
         with:
@@ -47,7 +45,11 @@ jobs:
       - run: |
          git fetch --prune --tags
       - name: Branch name
-        run: echo running on branch ${{ env.CURRENT_BRANCH }}
+        run: |
+          echo ::set-env name=CURRENT_BRANCH::$(echo ${GITHUB_REF} | cut -d"/" -f 3,4,5)
+          echo running on branch ${{ env.CURRENT_BRANCH }}
+        env:
+          PARENT_BRANCH: "release/codepush_2.0"
       - name: fetch
         run: |
            git fetch --prune --depth=10000 origin +refs/heads/*:refs/remotes/origin/*

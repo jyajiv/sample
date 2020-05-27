@@ -44,11 +44,14 @@ jobs:
         run: yarn install
       - run: |
          git fetch --prune --tags
+      - name: Read package.json
+        id: readPackageJson
+        run: |
+          content=`cat ./path/to/package.json`
+          echo "::set-output name=packageJson::$content"
       - name: Branch name
         run: |
-          packageJson=`cat ./package.json`
-          echo content of package.josn $packageJson
-          echo ::set-output name=CURRENT_BRANCH::${{fromJson(packageJson).version}}
+          echo ::set-output name=CURRENT_BRANCH::"${{fromJson(steps.readPackageJson.outputs.packageJson).version}}"
           echo ::set-output name=PARENT_BRANCH::"release/codepush_1.0"
         id: branch_name
       - name: fetch

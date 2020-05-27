@@ -48,7 +48,6 @@ jobs:
         id: readPackageJson
         run: |
           content=`cat ./package.json`
-          echo "content ${{ content }}"
           echo "::set-output name=packageJson::"$(echo $content)"
       - name: Branch name
         run: |

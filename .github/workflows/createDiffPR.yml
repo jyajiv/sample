@@ -68,5 +68,8 @@ jobs:
         run: |
           git add . && git commit -m "Git Diff report" && git push origin ${{ steps.branch_name.outputs.CURRENT_BRANCH }}
       - name: create PR
+        env:
+          GITHUB_USER: ${{ secrets.GITHUB_USER }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           hub pull-request -f -b ${{ steps.branch_name.outputs.PARENT_BRANCH }}  -h ${{ steps.branch_name.outputs.CURRENT_BRANCH }} -m "Git diff report for ${{ steps.branch_name.outputs.PARENT_BRANCH }}  and ${{ steps.branch_name.outputs.CURRENT_BRANCH }}"

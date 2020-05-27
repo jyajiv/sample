@@ -13,6 +13,7 @@ jobs:
         NODE_OPTIONS: --max_old_space_size=8192
         CODEPUSH_KEY_PASSWORD: ${{ secrets.CODEPUSH_API_TOKEN }}
         timeout-minutes: 120
+        CURRENT_BRANCH: $(git symbolic-ref HEAD 2>/dev/null | cut -d"/" -f 3,4,5)
         PARENT_BRANCH: "release/codepush_2.0"
       steps:
       - name: Checkout
@@ -46,7 +47,7 @@ jobs:
       - run: |
          git fetch --prune --tags
       - name: Branch name
-        run: echo running on branch ${GITHUB_REF##*/}
+        run: echo running on branch ${env.CURRENT_BRANCH}
       - name: fetch
         run: |
            git fetch --prune --depth=10000 origin +refs/heads/*:refs/remotes/origin/*
@@ -61,8 +62,8 @@ jobs:
           echo previous branch ${{ env.PARENT_BRANCH }}
       - name: create PR
         run: |
-          yarn generateDiffReport ${env.PARENT_BRANCH} ${GITHUB_REF##*/}
-          git add . && git commit -m 'Git Diff report' && git push origin ${GITHUB_REF##*/}
-          hub pull-request -f -b ${env.PARENT_BRANCH} -h ${GITHUB_REF##*/} -m 'Git diff report for ${env.PARENT_BRANCH} and ${GITHUB_REF##*/}'
+          yarn generateDiffReport ${{ env.PARENT_BRANCH }} ${{ env.CURRENT_BRANCH }}
+          git add . && git commit -m "Git Diff report" && git push origin ${{ CURRENT_BRANCH }}
+          hub pull-request -f -b ${{ env.PARENT_BRANCH }} -h ${{ env.CURRENT_BRANCH }} -m "Git diff report for ${{ env.PARENT_BRANCH }} and ${{ env.CURRENT_BRANCH }}"
 
   

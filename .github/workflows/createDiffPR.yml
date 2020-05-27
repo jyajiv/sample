@@ -51,7 +51,7 @@ jobs:
           echo "::set-output name=packageJson::"$(echo $content)""
       - name: Branch name
         run: |
-          PACKAGE_JSON=`${{ fromJson(steps.readPackageJson.outputs.packageJson) }}`
+          PACKAGE_JSON="$(fromJson(steps.readPackageJson.outputs.packageJson))"
           echo ::set-output name=CURRENT_BRANCH::"release/codepush_${{PACKAGE_JSON.version}}"
           echo ::set-output name=PARENT_BRANCH::"release/codepush_${{PACKAGE_JSON.parentVersion}}"
         id: branch_name

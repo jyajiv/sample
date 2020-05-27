@@ -46,7 +46,7 @@ jobs:
          git fetch --prune --tags
       - name: Branch name
         run: |
-          echo ::set-output name=CURRENT_BRANCH::$(echo ${GITHUB_REF} | cut -d"/" -f 3,4,5)
+          echo ::set-output name=CURRENT_BRANCH::"release/codepush_2.0"
           echo ::set-output name=PARENT_BRANCH::"release/codepush_2.0"
         id: branch_name
       - name: fetch

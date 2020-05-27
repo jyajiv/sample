@@ -28,7 +28,10 @@ const asyncCallback = callback => (err, stdout, stdin) => {
 };
 
 const executeCommand = () => {
-  exec(`git diff ${branches[0]}..${branches[1]} --name-only`, asyncCallback());
+  exec(
+    `git diff origin/${branches[0]}..origin/${branches[1]} --name-only`,
+    asyncCallback(),
+  );
 };
 
 if (branches.length === 2) {

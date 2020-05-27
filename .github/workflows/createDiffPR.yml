@@ -3,16 +3,17 @@ name: Generate git diff report and create PR
 on: 
   push:
     branches:
-      - 'release/__codepush_**'
+      - 'release/codepush_**'
 jobs:
-  codepush-android-build-deploy:
-      name: Codepush Android Build and Deploy
+  generate-git-diff-report-and-create-PR :
+      name: Generate git diff report and create PR 
       runs-on: ubuntu-latest
       env:
         ACTIONS_OS_NAME: "linux"
         NODE_OPTIONS: --max_old_space_size=8192
         CODEPUSH_KEY_PASSWORD: ${{ secrets.CODEPUSH_API_TOKEN }}
         timeout-minutes: 120
+        PARENT_BRANCH: "release/codepush_2.0"
       steps:
       - name: Checkout
         uses: actions/checkout@v1
@@ -57,9 +58,11 @@ jobs:
           git show-branch | grep "*" | grep -v "$(git rev-parse --abbrev-ref HEAD)" | head -n1 | sed "s/.*\\[\\(.*\\)\\].*/\\1/" | sed "s/[\\^~].*//"
       - name: print previous branch
         run: |  
-          echo previous branch ${{ env.PREVIOUS_BRANCH }}
+          echo previous branch ${{ env.PARENT_BRANCH }}
       - name: create PR
         run: |
-          yarn createDiffPR
+          yarn generateDiffReport ${env.PARENT_BRANCH} ${GITHUB_REF##*/}
+          git add . && git commit -m 'Git Diff report' && git push origin ${GITHUB_REF##*/}
+          hub pull-request -f -b ${env.PARENT_BRANCH} -h ${GITHUB_REF##*/} -m 'Git diff report for ${env.PARENT_BRANCH} and ${GITHUB_REF##*/}'
 
   

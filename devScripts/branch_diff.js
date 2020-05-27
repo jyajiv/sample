@@ -22,7 +22,7 @@ const asyncCallback = callback => (err, stdout, stdin) => {
     console.log(diff);
     getModuleNames.getAllImpactedModules(diff, () => {
       console.log('callback success');
-      diffPR.createPR(branches[0], branches[1]);
+      // diffPR.createPR(branches[0], branches[1]);
     });
   }
 };

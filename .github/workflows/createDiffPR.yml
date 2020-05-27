@@ -48,7 +48,7 @@ jobs:
         id: readPackageJson
         run: |
           content=`cat ./package.json`
-          echo content ${{ content }}
+          echo "content ${{ content }}"
       - name: Branch name
         run: |
           echo ::set-output name=CURRENT_BRANCH::"release/${{fromJson($(`cat ./package.json`)).version}}"

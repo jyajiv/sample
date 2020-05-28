@@ -72,7 +72,7 @@ jobs:
           yarn generateDiffReport ${{ steps.branch_name.outputs.PARENT_BRANCH }} ${{ steps.branch_name.outputs.CURRENT_BRANCH }}
       - name: push diff report
         run: |
-          git add . && git commit -m "Git Diff report" && git push --force origin ${{ steps.branch_name.outputs.CURRENT_BRANCH }}:${{ secrets.GITHUB_USER }}/gitdiff/${{ steps.branch_name.outputs.CURRENT_BRANCH }}
+          git add . && git commit -m "Git Diff report" && git push --force origin ${{ steps.branch_name.outputs.CURRENT_BRANCH }}:gitdiff/${{ steps.branch_name.outputs.CURRENT_BRANCH }}
       - name: create PR
         env:
           GITHUB_USER: ${{ secrets.GITHUB_USER }}

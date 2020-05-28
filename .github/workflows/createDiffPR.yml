@@ -11,8 +11,9 @@ jobs:
       env:
         ACTIONS_OS_NAME: "linux"
         NODE_OPTIONS: --max_old_space_size=8192
-        CODEPUSH_KEY_PASSWORD: ${{ secrets.CODEPUSH_API_TOKEN }}
         timeout-minutes: 120
+        GITHUB_USER: ${{ secrets.GITHUB_USER }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -22,16 +23,10 @@ jobs:
         run: |
           git config --local user.email "vijay.jeyaraman@cognizant.com"
           git config --local user.name "Vijay Actions"
-        env:
-          GITHUB_USER: ${{ secrets.GITHUB_USER }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Install hub
         uses: geertvdc/setup-hub@master
         with:
           hub-version: 2.14.2
-      - name: run hub commands
-        run: |
-         hub --version
       - name: Setup Node
         uses: actions/setup-node@v1
         with:
@@ -42,41 +37,24 @@ jobs:
           ruby-version: '2.x'
       - name: Yarn Install
         run: yarn install
-      - run: |
-         git fetch --prune --tags
       - name: Read package.json
         id: readPackageJson
         run: |
           content=`cat ./package.json`
           echo "::set-output name=packageJson::"$(echo $content)""
-      - name: Branch name
+      - name: Get branch names
         run: |
           PACKAGE_JSON="${{ fromJson(steps.readPackageJson.outputs.packageJson) }}"
           echo ::set-output name=ACTIONS_BRANCH::"$(echo ${GITHUB_REF} | cut -d"/" -f 3,4,5)"
           echo ::set-output name=CURRENT_BRANCH::"release/codepush_${{ fromJson(steps.readPackageJson.outputs.packageJson).version }}"
           echo ::set-output name=PARENT_BRANCH::"release/codepush_${{ fromJson(steps.readPackageJson.outputs.packageJson).parentVersion }}"
         id: branch_name
-      - name: fetch
-        run: |
-           git fetch --prune --depth=10000 origin +refs/heads/*:refs/remotes/origin/*
-      - name: git show-branch 
-        run: |  
-          git show-branch 
-      - name: get previous branch
-        run: |  
-          git show-branch | grep "*" | grep -v "$(git rev-parse --abbrev-ref HEAD)" | head -n1 | sed "s/.*\\[\\(.*\\)\\].*/\\1/" | sed "s/[\\^~].*//"
-      - name: print previous branch
-        run: |  
-          echo previous branch ${{ steps.branch_name.outputs.PARENT_BRANCH }}
-      - name: generate diff report
+      - name: Generate git diff report
         run: |
           yarn generateDiffReport ${{ steps.branch_name.outputs.PARENT_BRANCH }} ${{ steps.branch_name.outputs.CURRENT_BRANCH }}
-      - name: push diff report
+      - name: Push git diff report
         run: |
           git add . && git commit -m "Git Diff report" && git push --force origin ${{ steps.branch_name.outputs.ACTIONS_BRANCH }}:gitdiff/${{ steps.branch_name.outputs.CURRENT_BRANCH }}
-      - name: create PR
-        env:
-          GITHUB_USER: ${{ secrets.GITHUB_USER }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Create git diff report PR
         run: |
           hub pull-request -f -b ${{ steps.branch_name.outputs.PARENT_BRANCH }}  -h gitdiff/${{ steps.branch_name.outputs.CURRENT_BRANCH }} -m "Git diff report for ${{ steps.branch_name.outputs.PARENT_BRANCH }}  and ${{ steps.branch_name.outputs.CURRENT_BRANCH }}"

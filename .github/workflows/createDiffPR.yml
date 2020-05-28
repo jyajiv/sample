@@ -52,6 +52,7 @@ jobs:
       - name: Branch name
         run: |
           PACKAGE_JSON="${{ fromJson(steps.readPackageJson.outputs.packageJson) }}"
+          echo ::set-output name=ACTIONS_BRANCH::"$(echo ${GITHUB_REF} | cut -d"/" -f 3,4,5)"
           echo ::set-output name=CURRENT_BRANCH::"release/codepush_${{ fromJson(steps.readPackageJson.outputs.packageJson).version }}"
           echo ::set-output name=PARENT_BRANCH::"release/codepush_${{ fromJson(steps.readPackageJson.outputs.packageJson).parentVersion }}"
         id: branch_name
@@ -72,10 +73,10 @@ jobs:
           yarn generateDiffReport ${{ steps.branch_name.outputs.PARENT_BRANCH }} ${{ steps.branch_name.outputs.CURRENT_BRANCH }}
       - name: push diff report
         run: |
-          git add . && git commit -m "Git Diff report" && git push --force origin ${{ steps.branch_name.outputs.CURRENT_BRANCH }}:gitdiff/${{ steps.branch_name.outputs.CURRENT_BRANCH }}
+          git add . && git commit -m "Git Diff report" && git push --force origin ${{ steps.branch_name.outputs.ACTIONS_BRANCH }}:gitdiff/${{ steps.branch_name.outputs.CURRENT_BRANCH }}
       - name: create PR
         env:
           GITHUB_USER: ${{ secrets.GITHUB_USER }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          hub pull-request -f -b ${{ steps.branch_name.outputs.PARENT_BRANCH }}  -h ${{ secrets.GITHUB_USER }}/gitdiff/${{ steps.branch_name.outputs.CURRENT_BRANCH }} -m "Git diff report for ${{ steps.branch_name.outputs.PARENT_BRANCH }}  and ${{ steps.branch_name.outputs.CURRENT_BRANCH }}"
+          hub pull-request -f -b ${{ steps.branch_name.outputs.PARENT_BRANCH }}  -h gitdiff/${{ steps.branch_name.outputs.CURRENT_BRANCH }} -m "Git diff report for ${{ steps.branch_name.outputs.PARENT_BRANCH }}  and ${{ steps.branch_name.outputs.CURRENT_BRANCH }}"

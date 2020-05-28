@@ -73,7 +73,7 @@ jobs:
       - name: push diff report
         run: |
           git reset --hard origin/${{ steps.branch_name.outputs.CURRENT_BRANCH }}
-          git add . && git commit -m "Git Diff report" && git push --force origin ${{ steps.branch_name.outputs.CURRENT_BRANCH }}:${{ secrets.GITHUB_USER }}/gitdiff/${{ steps.branch_name.outputs.CURRENT_BRANCH }}
+          git add . && git commit -m "Git Diff report" && git push --force origin HEAD:${{ steps.branch_name.outputs.CURRENT_BRANCH }}:${{ secrets.GITHUB_USER }}/gitdiff/${{ steps.branch_name.outputs.CURRENT_BRANCH }}
       - name: create PR
         env:
           GITHUB_USER: ${{ secrets.GITHUB_USER }}

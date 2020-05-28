@@ -51,9 +51,9 @@ jobs:
           echo "::set-output name=packageJson::"$(echo $content)""
       - name: Branch name
         run: |
-          packageJson: ${{fromJson(steps.readPackageJson.outputs.packageJson)}}
-          echo ::set-output name=CURRENT_BRANCH::"release/codepush_${{packageJson.version}}"
-          echo ::set-output name=PARENT_BRANCH::"release/codepush_${{packageJson.parentVersion}}"
+          PACKAGE_JSON="${{ fromJson(steps.readPackageJson.outputs.packageJson) }}"
+          echo ::set-output name=CURRENT_BRANCH::"release/codepush_${{ fromJson(steps.readPackageJson.outputs.packageJson).version }}"
+          echo ::set-output name=PARENT_BRANCH::"release/codepush_${{ fromJson(steps.readPackageJson.outputs.packageJson).parentVersion }}"
         id: branch_name
       - name: fetch
         run: |

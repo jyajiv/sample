@@ -1,0 +1,59 @@
+name: Generate git diff report and create PR 
+
+on: 
+  push:
+    branches:
+      - 'release/codepush_**'
+jobs:
+  generate-git-diff-report-and-create-PR :
+      name: Generate git diff report and create PR 
+      runs-on: ubuntu-latest
+      env:
+        ACTIONS_OS_NAME: "linux"
+        NODE_OPTIONS: --max_old_space_size=8192
+        timeout-minutes: 120
+        GITHUB_USER: ${{ github.actor }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Configure Git
+        run: |
+          git config --local user.name ${{ github.actor }}
+      - name: Install hub
+        uses: geertvdc/setup-hub@v1.0.0
+        with:
+          hub-version: 2.14.2
+      - name: Setup Node
+        uses: actions/setup-node@v1
+        with:
+          node-version: 12.x
+      - name: Setup Ruby
+        uses: actions/setup-ruby@v1
+        with:
+          ruby-version: '2.x'
+      - name: Yarn Install
+        run: yarn install
+      - name: Read package.json
+        id: readPackageJson
+        run: |
+          content=`cat ./package.json`
+          echo "::set-output name=packageJson::"$(echo $content)""
+      - name: Get branch names
+        run: |
+          PACKAGE_JSON="${{ fromJson(steps.readPackageJson.outputs.packageJson) }}"
+          echo ::set-output name=ACTIONS_BRANCH::"$(echo ${GITHUB_REF} | cut -d"/" -f 3,4,5)"
+          echo ::set-output name=CURRENT_BRANCH::"release/codepush_${{ fromJson(steps.readPackageJson.outputs.packageJson).version }}"
+          echo ::set-output name=PARENT_BRANCH::"release/codepush_${{ fromJson(steps.readPackageJson.outputs.packageJson).parentVersion }}"
+        id: branch_name
+      - name: Generate git diff report
+        run: |
+          yarn generateDiffReport ${{ steps.branch_name.outputs.PARENT_BRANCH }} ${{ steps.branch_name.outputs.CURRENT_BRANCH }}
+      - name: Push git diff report
+        run: |
+          git add . && git commit -m "Git Diff report" && git push --force origin ${{ steps.branch_name.outputs.ACTIONS_BRANCH }}:gitdiff/${{ steps.branch_name.outputs.CURRENT_BRANCH }}
+      - name: Create git diff report PR
+        run: |
+          hub pull-request -f -b ${{ steps.branch_name.outputs.PARENT_BRANCH }}  -h gitdiff/${{ steps.branch_name.outputs.CURRENT_BRANCH }} -m "Git diff report for ${{ steps.branch_name.outputs.PARENT_BRANCH }}  and ${{ steps.branch_name.outputs.CURRENT_BRANCH }}"

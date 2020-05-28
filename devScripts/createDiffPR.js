@@ -1,77 +1,33 @@
 const {exec} = require('child_process');
-const fs = require('fs');
 
-// const _ = require("lodash");
+const _ = require('lodash');
 
-let currentBranch = '';
-let previousBranch = '';
-let currentUserFork = '';
+let destinationBranch = '';
+let sourceBranch = '';
 
-const baseRepo = 'praveenkumarc86/caribou';
+const baseRepo = 'jyajiv/sample';
+
 let pullRequestMessage = 'Change report';
 
-createPR('release/20.5.0', 'release/20.5.0');
-
-function getGitUserInfo() {
-  exec(
-    `git show-branch | grep "*" | grep -v "$(git rev-parse --abbrev-ref HEAD)" | head -n1 | sed "s/.*\\[\\(.*\\)\\].*/\\1/" | sed "s/[\\^~].*//"`,
-    (error, output, input) => {
-      if (error) {
-        console.log(error);
-        throw error;
-      } else {
-        console.log('previousBranch command output is ', output);
-        previousBranch = output.trim();
-        console.log('previous Branch is ', previousBranch);
-      }
-    },
-  );
-
-  exec(
-    `git fetch | git symbolic-ref HEAD 2>/dev/null | cut -d"/" -f 3,4,5`,
-    (error, output, input) => {
-      if (error) {
-        console.log(error);
-        throw error;
-      } else {
-        currentBranch = output.trim();
-        console.log('Current branch is ', currentBranch);
-        exec(
-          `git remote get-url origin | cut -d"/" -f 4`,
-          (err, stdOut, stdIn) => {
-            if (err) {
-              console.log(err);
-              throw err;
-            } else {
-              currentUserFork = `${stdOut.trim()}/example-services`;
-              console.log('Current User is ', currentUserFork);
-              // getGitUserDetailsCallback();
-            }
-          },
-        );
-      }
-    },
-  );
-}
-
-function createPR(sourceBranch, destinationBranch) {
+function createPR(destination, source) {
+  sourceBranch = source;
+  destinationBranch = destination;
   pullRequestMessage = `Git diff report for ${sourceBranch} and ${destinationBranch}`;
-  getGitUserInfo();
+  commitAllChanges();
 }
 
-const gitPushCallback = callback => (err, stdOut, stdIn) => {
+const gitPushCallback = (err, stdOut, stdIn) => {
   if (err) {
-    // if (!_.includes(_.get(err, "message", ""), "No staged files")) {
-    console.log(err);
-    throw err;
-    //  }
+    if (!_.includes(_.get(err, 'message', ''), 'No staged files')) {
+      throw err;
+    }
   }
   console.log('Creating new Pull request ...');
   console.log(
-    `hub pull-request -f -b ${currentUserFork}:${previousBranch} -h ${currentUserFork}:${currentBranch} -m '${pullRequestMessage}'`,
+    `hub pull-request -f -b ${destinationBranch} -h ${sourceBranch} -m '${pullRequestMessage}'`,
   );
   exec(
-    `hub pull-request -f -b ${currentUserFork}:${previousBranch} -h ${currentUserFork}:${currentBranch} -m '${pullRequestMessage}'`,
+    `hub pull-request -f -b ${destinationBranch} -h ${sourceBranch} -m '${pullRequestMessage}'`,
     (error, output, input) => {
       if (error) {
         console.log('Error creating PR - ', error);
@@ -82,18 +38,15 @@ const gitPushCallback = callback => (err, stdOut, stdIn) => {
   );
 };
 
-function getGitUserDetailsCallback() {
-  console.log('Fetch git repo details successfull');
+function commitAllChanges() {
+  console.log('Commiting any uncommitted changes...');
   console.log(
-    `git add . && git commit -m '${pullRequestMessage}' && git push origin HEAD:${currentBranch}`,
+    `git add . && git commit -m '${pullRequestMessage}' && git push origin ${sourceBranch}`,
   );
-  fs.writeFile('./test.txt', `this is the diff report${new Date()}`, err => {
-    console.log('File created', err);
-    exec(
-      `git add . && git commit -m '${pullRequestMessage}' && git push origin HEAD:${currentBranch}`,
-      // gitPushCallback(),
-    );
-  });
+  exec(
+    `git add . && git commit -m '${pullRequestMessage}' && git push origin ${sourceBranch}`,
+    gitPushCallback(),
+  );
 }
 
 module.exports = {createPR};

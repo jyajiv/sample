@@ -1,43 +1,64 @@
-name: Release Codepush Build and Deploy
+name: Generate git diff report and create PR 
 
 on: 
   push:
     branches:
-      - 'release/codepush_**'
+      - 'release/__codepush_**'
 jobs:
   codepush-android-build-deploy:
       name: Codepush Android Build and Deploy
-      runs-on: macos-latest
+      runs-on: ubuntu-latest
       env:
-        ACTIONS_OS_NAME: "osx"
+        ACTIONS_OS_NAME: "linux"
         NODE_OPTIONS: --max_old_space_size=8192
         CODEPUSH_KEY_PASSWORD: ${{ secrets.CODEPUSH_API_TOKEN }}
         timeout-minutes: 120
       steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v1
         with:
-          fetch-depth: 0
+          fetch-depth: 50
+      - name: Configure Git
+        run: |
+          git config --local user.email "vijay.jeyaraman@cognizant.com"
+          git config --local user.name "Vijay Actions"
+        env:
+          GITHUB_USER: ${{ secrets.GITHUB_USER }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Install hub
+        uses: geertvdc/setup-hub@master
+        with:
+          hub-version: 2.14.2
+      - name: run hub commands
+        run: |
+         hub --version
+      - name: Setup Node
+        uses: actions/setup-node@v1
+        with:
+          node-version: 12.x
+      - name: Setup Ruby
+        uses: actions/setup-ruby@v1
+        with:
+          ruby-version: '2.x'
+      - name: Yarn Install
+        run: yarn install
+      - run: |
+         git fetch --prune --tags
       - name: Branch name
         run: echo running on branch ${GITHUB_REF##*/}
       - name: fetch
         run: |
-           git fetch --no-tags --prune --depth=10000 origin +refs/heads/*:refs/remotes/origin/*
+           git fetch --prune --depth=10000 origin +refs/heads/*:refs/remotes/origin/*
+      - name: git show-branch 
+        run: |  
+          git show-branch 
       - name: get previous branch
         run: |  
           git show-branch | grep "*" | grep -v "$(git rev-parse --abbrev-ref HEAD)" | head -n1 | sed "s/.*\\[\\(.*\\)\\].*/\\1/" | sed "s/[\\^~].*//"
       - name: print previous branch
         run: |  
           echo previous branch ${{ env.PREVIOUS_BRANCH }}
-      - uses: geertvdc/setup-hub@master
-      - name: Configure Git
-        run: |
-          git config --local user.email "vijay.jeyaraman@cognizant.com"
-          git config --local user.name "Vijay Actions"
       - name: create PR
-        env:
-          GITHUB_USER: ${{ secrets.GITHUB_USER }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           yarn createDiffPR
 

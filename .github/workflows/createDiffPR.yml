@@ -73,10 +73,10 @@ jobs:
       - name: push diff report
         run: |
           git reset --hard origin/${{ steps.branch_name.outputs.CURRENT_BRANCH }}
-          git add . && git commit -m "Git Diff report" && git push origin HEAD:${{ steps.branch_name.outputs.CURRENT_BRANCH }}
+          git add . && git commit -m "Git Diff report" && git push --force origin ${{ steps.branch_name.outputs.CURRENT_BRANCH }}:${{ secrets.GITHUB_USER }}/gitdiff/${{ steps.branch_name.outputs.CURRENT_BRANCH }}
       - name: create PR
         env:
           GITHUB_USER: ${{ secrets.GITHUB_USER }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          hub pull-request -f -b ${{ steps.branch_name.outputs.PARENT_BRANCH }}  -h ${{ steps.branch_name.outputs.CURRENT_BRANCH }} -m "Git diff report for ${{ steps.branch_name.outputs.PARENT_BRANCH }}  and ${{ steps.branch_name.outputs.CURRENT_BRANCH }}"
+          hub pull-request -f -b ${{ steps.branch_name.outputs.PARENT_BRANCH }}  -h ${{ secrets.GITHUB_USER }}/gitdiff/${{ steps.branch_name.outputs.CURRENT_BRANCH }} -m "Git diff report for ${{ steps.branch_name.outputs.PARENT_BRANCH }}  and ${{ steps.branch_name.outputs.CURRENT_BRANCH }}"
